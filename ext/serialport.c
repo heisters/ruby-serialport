@@ -20,12 +20,32 @@
 
 VALUE cSerialPort; /* serial port class */
 
+/*
+ * :nodoc: This method is privat and will be called by SerialPort#new or SerialPort#open.
+ */
 static VALUE sp_create(class, _port)
    VALUE class, _port;
 {
    return sp_create_impl(class, _port);
 }
 
+/*
+ * Configure the serial port. You can pass a hash or multiple values
+ * as separate arguments. Invalid or unsupported values will raise
+ * an ArgumentError.
+ *
+ * When using a hash the following keys are recognized:
+ * ["baud"] Integer from 50 to 256000, depends on platform
+ * ["data_bits"] Integer from 5 to 8 (4 is allowed on Windows too)
+ * ["stop_bits"] An integer, only allowed values are 1 or 2 (1.5 is not supported)
+ * ["parity"] One of the constants NONE, EVEN or ODD (Windows allows also MARK and SPACE)
+ *
+ * When using separate arguments, they are interpreted as:
+ * (baud, data_bits = 8, stop_bits = 1, parity = (previous_databits==8 ? NONE : EVEN))
+ *
+ * Nota: A baudrate of nil will keep the old value. The default parity depends on the
+ * number of databits configured before this function call.
+ */
 static VALUE sp_set_modem_params(argc, argv, self)
    int argc;
    VALUE *argv, self;
@@ -33,62 +53,115 @@ static VALUE sp_set_modem_params(argc, argv, self)
    return sp_set_modem_params_impl(argc, argv, self);
 }
 
+/*
+ * Send a break for the given time.
+ *
+ * <tt>time</tt> is an integer of tenths-of-a-second for the break.
+ *
+ * Note: Under Posix, this value is very approximate.
+ */
 static VALUE sp_break(self, time)
    VALUE self, time;
 {
    return sp_break_impl(self, time);
 }
 
+/*
+ * Get the state (0 or 1) of the DTR line (not available on Windows)
+ */
 static VALUE sp_get_dtr(self)
    VALUE self;
 {
    return sp_get_dtr_impl(self);
 }
 
+/*
+ * Get the flow control. The result is either NONE, HARD, SOFT or (HARD | SOFT)
+ */
 static VALUE sp_get_flow_control(self)
    VALUE self;
 {
    return sp_get_flow_control_impl(self);
 }
 
+/*
+ * Get the timeout value (in milliseconds) for reading.
+ * See SerialPort#set_read_timeout for details.
+ */
 static VALUE sp_get_read_timeout(self)
    VALUE self;
 {
    return sp_get_read_timeout_impl(self);
 }
 
+/*
+ * Get the state (0 or 1) of the RTS line (not available on Windows)
+ */
 static VALUE sp_get_rts(self)
    VALUE self;
 {
    return sp_get_rts_impl(self);
 }
 
+/*
+ * Get the write timeout (in milliseconds)
+ *
+ * Note: Under Posix, write timeouts are not implemented.
+ */
 static VALUE sp_get_write_timeout(self)
    VALUE self;
 {
    return sp_get_write_timeout_impl(self);
 }
 
+/*
+ * Set the state (0 or 1) of the DTR line
+ */
 static VALUE sp_set_dtr(self, val)
 {
    return sp_set_dtr_impl(self, val);
 }
 
+/*
+ * Set the flow control to either NONE, HARD, SOFT or (HARD | SOFT)
+ *
+ *  Note: SerialPort::HARD mode is not supported on all platforms.
+ *  SerialPort::HARD uses RTS/CTS handshaking; DSR/DTR is not
+ *  supported.
+ */
 static VALUE sp_set_flow_control(self, val)
 {
    return sp_set_flow_control_impl(self, val);
 }
 
+/*
+ * Set the timeout value (in milliseconds) for reading.
+ * A negative read timeout will return all the available data without
+ * waiting, a zero read timeout will not return until at least one
+ * byte is available, and a positive read timeout returns when the
+ * requested number of bytes is available or the interval between the
+ * arrival of two bytes exceeds the timeout value.
+ *
+ * Note: Read timeouts don't mix well with multi-threading.
+ */
 static VALUE sp_set_read_timeout(self, val)
 {
    return sp_set_read_timeout_impl(self, val);
 }
 
+/*
+ * Set the state (0 or 1) of the RTS line
+ */
 static VALUE sp_set_rts(self, val)
 {
    return sp_set_rts_impl(self, val);
 }
 
+/*
+ * Set a write timeout (in milliseconds)
+ *
+ * Note: Under Posix, write timeouts are not implemented.
+ */
 static VALUE sp_set_write_timeout(self, val)
 {
    return sp_set_write_timeout_impl(self, val);
@@ -101,6 +174,9 @@ static void get_modem_params(self, mp)
    get_modem_params_impl(self, mp);
 }
 
+/*
+ * Set the baud rate, see SerialPort#set_modem_params for details.
+ */
 static VALUE sp_set_data_rate(self, data_rate)
    VALUE self, data_rate;
 {
@@ -113,6 +189,9 @@ static VALUE sp_set_data_rate(self, data_rate)
    return data_rate;
 }
 
+/*
+ * Set the data bits, see SerialPort#set_modem_params for details.
+ */
 static VALUE sp_set_data_bits(self, data_bits)
    VALUE self, data_bits;
 {
@@ -125,6 +204,9 @@ static VALUE sp_set_data_bits(self, data_bits)
    return data_bits;
 }
 
+/*
+ * Set the stop bits, see SerialPort#set_modem_params for details.
+ */
 static VALUE sp_set_stop_bits(self, stop_bits)
    VALUE self, stop_bits;
 {
@@ -137,6 +219,9 @@ static VALUE sp_set_stop_bits(self, stop_bits)
    return stop_bits;
 }
 
+/*
+ * Set the parity, see SerialPort#set_modem_params for details.
+ */
 static VALUE sp_set_parity(self, parity)
    VALUE self, parity;
 {
@@ -149,6 +234,9 @@ static VALUE sp_set_parity(self, parity)
    return parity;
 }
 
+/*
+ * Get the current baud rate, see SerialPort#get_modem_params for details.
+ */
 static VALUE sp_get_data_rate(self)
    VALUE self;
 {
@@ -159,6 +247,9 @@ static VALUE sp_get_data_rate(self)
    return INT2FIX(mp.data_rate);
 }
 
+/*
+ * Get the current data bits, see SerialPort#get_modem_params for details.
+ */
 static VALUE sp_get_data_bits(self)
    VALUE self;
 {
@@ -169,6 +260,9 @@ static VALUE sp_get_data_bits(self)
    return INT2FIX(mp.data_bits);
 }
 
+/*
+ * Get the current stop bits, see SerialPort#get_modem_params for details.
+ */
 static VALUE sp_get_stop_bits(self)
    VALUE self;
 {
@@ -179,6 +273,9 @@ static VALUE sp_get_stop_bits(self)
    return INT2FIX(mp.stop_bits);
 }
 
+/*
+ * Get the current parity, see SerialPort#get_modem_params for details.
+ */
 static VALUE sp_get_parity(self)
    VALUE self;
 {
@@ -189,6 +286,16 @@ static VALUE sp_get_parity(self)
    return INT2FIX(mp.parity);
 }
 
+
+/*
+ * Get the configure of the serial port.
+ *
+ * Returned is a hash with the following keys:
+ * ["baud"] Integer with the baud rate
+ * ["data_bits"] Integer from 5 to 8 (4 is possible on Windows too)
+ * ["stop_bits"] Integer, 1 or 2 (1.5 is not supported)
+ * ["parity"] One of the constants NONE, EVEN or ODD (on Windows may also MARK or SPACE)
+ */
 static VALUE sp_get_modem_params(self)
    VALUE self;
 {
@@ -207,6 +314,9 @@ static VALUE sp_get_modem_params(self)
    return hash;
 }
 
+/*
+ * Get the state (0 or 1) of the CTS line
+ */
 static VALUE sp_get_cts(self)
    VALUE self;
 {
@@ -217,6 +327,9 @@ static VALUE sp_get_cts(self)
    return INT2FIX(ls.cts);
 }
 
+/*
+ * Get the state (0 or 1) of the DSR line
+ */
 static VALUE sp_get_dsr(self)
    VALUE self;
 {
@@ -227,6 +340,9 @@ static VALUE sp_get_dsr(self)
    return INT2FIX(ls.dsr);
 }
 
+/*
+ * Get the state (0 or 1) of the DCD line
+ */
 static VALUE sp_get_dcd(self)
    VALUE self;
 {
@@ -237,6 +353,9 @@ static VALUE sp_get_dcd(self)
    return INT2FIX(ls.dcd);
 }
 
+/*
+ * Get the state (0 or 1) of the RI line
+ */
 static VALUE sp_get_ri(self)
    VALUE self;
 {
@@ -247,6 +366,12 @@ static VALUE sp_get_ri(self)
    return INT2FIX(ls.ri);
 }
 
+/*
+ * Return a hash with the state of each line status bit.  Keys are
+ * "rts", "dtr", "cts", "dsr", "dcd", and "ri".
+ *
+ * Note: Under Windows, the rts and dtr values are not included.
+ */
 static VALUE sp_signals(self)
    VALUE self;
 {
@@ -269,6 +394,11 @@ static VALUE sp_signals(self)
    return hash;
 }
 
+/*
+ * This class is used for communication over a serial port.
+ * In addition to the methods here, you can use everything
+ * Ruby's IO-class provides (read, write, getc, readlines, ...)
+ */
 void Init_serialport()
 {
    sBaud = rb_str_new2("baud");
@@ -339,5 +469,6 @@ void Init_serialport()
    rb_define_const(cSerialPort, "EVEN", INT2FIX(EVEN));
    rb_define_const(cSerialPort, "ODD", INT2FIX(ODD));
 
+   /* the package's version as a string "X.Y.Z", beeing major, minor and patch level */
    rb_define_const(cSerialPort, "VERSION", rb_str_new2(RUBY_SERIAL_PORT_VERSION));
 }

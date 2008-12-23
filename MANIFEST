@@ -12,5 +12,5 @@ lib/serialport.rb
 MANIFEST
 Rakefile
 README
-test/miniterm.rb
+examples/miniterm.rb
 Manifest
