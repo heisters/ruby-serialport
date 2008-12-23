@@ -1,8 +1,4 @@
 CHANGELOG
-debian/changelog
-debian/control
-debian/copyright
-debian/rules
 ext/extconf.rb
 ext/serialport.c
 ext/serialport.h
