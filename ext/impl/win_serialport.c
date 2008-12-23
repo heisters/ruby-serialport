@@ -16,10 +16,6 @@
  * http://www.easysw.com/~mike/serial/
  */
 
-#include "serialport.h"
-
-#if defined(OS_MSWIN) || defined(OS_BCCWIN)
-
 #include <stdio.h>   /* Standard input/output definitions */
 #include <io.h>      /* Low-level I/O definitions */
 #include <fcntl.h>   /* File control definitions */
@@ -613,4 +609,3 @@ VALUE RB_SERIAL_EXPORT sp_get_dtr_impl(self)
    return self;
 }
 
-#endif /* defined(OS_MSWIN) || defined(OS_BCCWIN) */

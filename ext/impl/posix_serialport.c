@@ -16,11 +16,6 @@
  * http://www.easysw.com/~mike/serial/
  */
 
-#include "serialport.h"
-
-/* Check if we are on a posix compliant system. */
-#if !defined(OS_MSWIN) && !defined(OS_BCCWIN)
-
 #include <stdio.h>   /* Standard input/output definitions */
 #include <unistd.h>  /* UNIX standard function definitions */
 #include <fcntl.h>   /* File control definitions */
@@ -664,4 +659,3 @@ static VALUE sp_get_dtr_impl(self)
    return INT2FIX(ls.dtr);
 }
 
-#endif /* !defined(OS_MSWIN) || !defined(OS_BCCWIN) */

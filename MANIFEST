@@ -4,10 +4,10 @@ debian/control
 debian/copyright
 debian/rules
 ext/extconf.rb
-ext/posix_serialport_impl.c
 ext/serialport.c
 ext/serialport.h
-ext/win_serialport_impl.c
+ext/impl/posix_serialport.c
+ext/impl/win_serialport.c
 lib/serialport.rb
 MANIFEST
 Rakefile

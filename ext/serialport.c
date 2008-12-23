@@ -2,6 +2,7 @@
  * Guillaume Pierronnet <moumar@netcourrier.com>
  * Alan Stern <stern@rowland.harvard.edu>
  * Daniel E. Shipton <dshipton@redshiptechnologies.com>
+ * Jonas Bähr <jonas.baehr@fs.ei.tum.de>
  *
  * This code is hereby licensed for public consumption under either the
  * GNU GPL v2 or greater.
@@ -17,6 +18,13 @@
  */
 
 #include "serialport.h"
+
+/* include only the implementation we need */
+#if defined(OS_MSWIN) || defined(OS_BCCWIN)
+#include "impl/win_serialport.c"
+#else
+#include "impl/posix_serialport.c"
+#endif /* defined(OS_MSWIN) || defined(OS_BCCWIN) */
 
 VALUE cSerialPort; /* serial port class */
 
