@@ -60,7 +60,7 @@ static VALUE sp_create_impl(class, _port)
 #if defined(OS_LINUX) || defined(OS_CYGWIN)
       "/dev/ttyS0", "/dev/ttyS1", "/dev/ttyS2", "/dev/ttyS3",
       "/dev/ttyS4", "/dev/ttyS5", "/dev/ttyS6", "/dev/ttyS7"
-#elif defined(OS_FREEBSD) || defined(OS_NETBSD) || defined(OS_OPENBSD)
+#elif defined(OS_FREEBSD) || defined(OS_NETBSD) || defined(OS_OPENBSD) || defined(OS_DARWIN)
          "/dev/cuaa0", "/dev/cuaa1", "/dev/cuaa2", "/dev/cuaa3",
       "/dev/cuaa4", "/dev/cuaa5", "/dev/cuaa6", "/dev/cuaa7"
 #elif defined(OS_SOLARIS)
