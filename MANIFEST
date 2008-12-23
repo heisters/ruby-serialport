@@ -9,8 +9,8 @@ ext/serialport.h
 ext/impl/posix_serialport.c
 ext/impl/win_serialport.c
 lib/serialport.rb
+LICENSE
 MANIFEST
 Rakefile
 README
 examples/miniterm.rb
-Manifest
