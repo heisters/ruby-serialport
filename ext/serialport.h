@@ -22,7 +22,7 @@
 #define RUBY_SERIAL_PORT_VERSION   "0.7.0"
 
 #include <ruby.h>    /* ruby inclusion */
-#include <rubyio.h>  /* ruby io inclusion */
+#include <ruby/io.h>  /* ruby io inclusion */
 
 struct modem_params
 {
